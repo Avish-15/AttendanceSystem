@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 import mysql.connector
 
-app = Flask(__name__, template_folder=".", static_folder="static")
+app = Flask(__name__)
 app.secret_key = 'aK9$mP2xL#7qR5nW&8vT3jF6hB!4yC1zA@2eD9gH5iJ8kM3nP7qS4tU6wX1yZ0'
 
 # ---------- DATABASE CONNECTION ----------
@@ -161,8 +161,8 @@ def add_student():
     
     try:
         cursor.execute(
-            "INSERT INTO students (department, year, roll_no, password) VALUES (%s,%s,%s,%s)",
-            (data["department"], data["year"], data["roll_no"], data["password"])
+            "INSERT INTO students (name,department, year, roll_no, password) VALUES (%s,%s,%s,%s,%s)",
+            (data["name"],data["department"], data["year"], data["roll_no"], data["password"])
         )
         db.commit()
         message = "Student added successfully"
