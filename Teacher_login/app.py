@@ -24,7 +24,7 @@ def get_db_connection(autocommit=False):
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="root",
+        password="123456",
         database="teacher",
         autocommit=autocommit,
     )
@@ -103,7 +103,7 @@ def get_students_by_dept_year():
 
     # 🔁 UI → DB mappings
     department_map = {
-        "BSCIT": "IT",
+        "BSCIT": "BSCIT",
         "CS": "CS"
     }
 
@@ -295,18 +295,26 @@ def monthly_student_report():
 
 #--------Defaulter--------#
 
-
-@app.route('/api/defaulter_report', methods=['POST'])
+@app.route("/api/defaulter_report", methods=["POST"])
 def defaulter_report():
     try:
         data = request.json
+        print("DEF DATA:", data)
 
-        subject = data['subject']
-        year = int(data['year'])           
-        stream = data['stream']
-        from_date = data['from_date']      
-        to_date = data['to_date']          
-        threshold = int(data.get('threshold', 75))
+        if not data.get("from_date") or not data.get("to_date"):
+            return jsonify({"error": "Date range required"}), 400
+
+        year = int(data.get("year"))
+        stream = data.get("stream")
+        threshold = int(data.get("threshold", 75))
+
+        from_date = data["from_date"]
+        to_date   = data["to_date"]
+
+        subject = data.get("subject")
+        if not subject:
+            return jsonify({"error": "Subject required"}), 400
+
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -315,47 +323,37 @@ def defaulter_report():
         SELECT
             s.id AS student_id,
             s.name AS student_name,
-            COUNT(a.id) AS total_lectures,
-            SUM(a.status = 'present') AS present_count,
-            ROUND(
-                (SUM(a.status = 'present') / COUNT(a.id)) * 100, 2
-            ) AS percentage
+            COUNT(a.status) AS total_lectures,
+            SUM(a.status='P') AS present_count,
+            ROUND(SUM(a.status='P')/COUNT(a.status)*100, 2) AS percentage
         FROM students s
-        JOIN attendance a ON s.id = a.student_id
-        WHERE s.stream = %s
-          AND s.year = %s
-          AND a.subject = %s
-          AND DATE(a.lecture_date) BETWEEN %s AND %s
+        JOIN attendance a ON a.student_id = s.id
+        WHERE s.year = %s
+          AND s.department = %s
+          AND STR_TO_DATE(
+                SUBSTRING_INDEX(a.lecture_key, '_', -1),
+                '%Y-%m-%dT%H:%i'
+              ) BETWEEN %s AND %s
         GROUP BY s.id, s.name
         HAVING percentage < %s
-        ORDER BY percentage ASC
         """
 
         cursor.execute(
             query,
-            (
-                stream,
-                year,
-                subject,
-                from_date,
-                to_date,
-                threshold
-            )
+            (year, stream, from_date, to_date, threshold)
         )
 
         result = cursor.fetchall()
-        return jsonify(result)
+        print("DEF RESULT:", result)
 
-    except Exception as e:
-        print("Defaulter error:", e)
-        return jsonify({"error": str(e)}), 500
-
-    finally:
         cursor.close()
         conn.close()
 
+        return jsonify(result)
 
-
+    except Exception as e:
+        print("DEF ERROR:", e)
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
