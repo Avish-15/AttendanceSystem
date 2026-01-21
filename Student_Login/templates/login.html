@@ -177,7 +177,7 @@
       <input type="text" id="roll_no" placeholder="Enter Roll Number" required>
 
       <label>Department:</label>
-      <select id="stream" required>
+      <select id="department" required>
         <option value="">Select department</option>
         <option value="CS">CS</option>
         <option value="IT">IT</option>
@@ -214,12 +214,12 @@
 
       // Get form values
       const roll_no = document.getElementById('roll_no').value;
-      const stream= document.getElementById('stream').value;
+      const department= document.getElementById('department').value;
       const year = document.getElementById('year').value;
       const password = document.getElementById('password').value;
 
       // Validate inputs
-      if (!roll_no || !stream || !year || !password) {
+      if (!roll_no || !department || !year || !password) {
         showError('Please fill in all fields');
         return;
       }
@@ -239,7 +239,7 @@
           credentials: 'include',
           body: JSON.stringify({
             roll_no: roll_no,
-            stream: stream,
+            department: department,
             year: year,
             password: password
           })
