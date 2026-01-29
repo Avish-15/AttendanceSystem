@@ -510,7 +510,7 @@ else if (report === 'defaulter') {
     const toDate = document.getElementById("def-to").value;
 
     if (!fromDate || !toDate) {
-      showDefAlert("Please select both dates");
+      showDefAlert("Please select start & end date");
       return;
     }
     const numericYear = getNumericYear(year);  // FY -> 1, SY -> 2, TY -> 3
@@ -614,7 +614,7 @@ else if (report === 'overall_defaulter') {
     const toDate = document.getElementById("def-to").value;
 
     if (!fromDate || !toDate) {
-      showDefAlert("Please select both dates");
+      showDefAlert("Please select start & end date");
       return;
     }
     const numericYear = getNumericYear(year);  // FY -> 1, SY -> 2, TY -> 3
@@ -679,7 +679,7 @@ else if (report === 'overall_defaulter') {
   const toDate   = document.getElementById("def-to").value;
 
   if(!fromDate || !toDate){
-    showDefAlert("Please select both dates");
+    showDefAlert("Please select start & end date");
     return;
   }
 
@@ -748,7 +748,7 @@ else if (report === 'overall_report') {
     const toDate = document.getElementById("def-to").value;
 
     if (!fromDate || !toDate) {
-      showDefAlert("Please select both dates");
+      showDefAlert("Please select start & end date");
       return;
     }
     const numericYear = getNumericYear(year);  // FY -> 1, SY -> 2, TY -> 3
@@ -811,7 +811,7 @@ document.getElementById("exportExcel").onclick = ()=>{
   const toDate   = document.getElementById("def-to").value;
 
   if(!fromDate || !toDate){
-    showDefAlert("Please select both dates");
+    showDefAlert("Please select start & end date");
     return;
   }
 
@@ -872,7 +872,7 @@ function updateReportDropdown() {
     <option value="attendance">Take Attendance</option>
     <option value="month">Monthly</option>
     <option value="semester">Semester</option>
-    <option value="defaulter">Defaulter</option>
+    <option value="defaulter">Subject Wise Defaulter</option>
   `;
 
   // ✅ Add ONLY when year matches assigned class teacher year
