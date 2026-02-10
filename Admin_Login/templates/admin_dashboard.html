@@ -171,7 +171,7 @@ td {
     <h2>Add Teacher</h2>
     <label>Name</label><input id="tname">
     <label>Department</label>
-    <select id="tdept"><option value="">Select Department</option><option>CS</option><option>IT</option></select>
+    <select id="tdept"><option value="">Select Department</option><option>Computer Science</option><option>Information Technology</option></select>
     <label>Teacher ID</label><input id="tid">
     <label>Password</label><input type="password" id="tpass">
     <button class="btn" onclick="saveTeacher()">Save</button>
@@ -240,8 +240,8 @@ td {
     <label>Stream</label>
     <select id="as_stream">
         <option value="">Select</option>
-        <option value="IT">IT</option>
-        <option value="CS">CS</option>
+        <option value="IT">Information Technology</option>
+        <option value="CS">Computer Science</option>
     </select>
 
     <label>Year</label>
@@ -255,12 +255,12 @@ td {
     <label>Semester</label>
     <select id="as_semester">
         <option value="">Select</option>
-        <option value="1">Sem 1</option>
-        <option value="2">Sem 2</option>
-        <option value="3">Sem 3</option>
-        <option value="4">Sem 4</option>
-        <option value="5">Sem 5</option>
-        <option value="6">Sem 6</option>
+        <option value="1">Sem I</option>
+        <option value="2">Sem II</option>
+        <option value="3">Sem III</option>
+        <option value="4">Sem IV</option>
+        <option value="5">Sem V</option>
+        <option value="6">Sem VI</option>
     </select>
 
     <label>Subject</label>
@@ -280,19 +280,21 @@ td {
 
     <label>Stream</label>
     <select id="ct_stream">
-        <option value="BSCIT">IT</option>
-        <option value="CS">CS</option>
+        <option value="">Select</option>
+        <option value="BSCIT">Information Technology</option>
+        <option value="CS">Computer Science</option>
     </select>
 
     <label>Year</label>
     <select id="ct_year">
+        <option value="">Select</option>
         <option value="1">First Year</option>
         <option value="2">Second Year</option>
         <option value="3">Third Year</option>
     </select>
 
     <label>Academic Year</label>
-    <input id="ct_academic_year" placeholder="2024-25">
+    <input id="ct_academic_year">
 
     <button class="btn" onclick="assignClassTeacher()">Assign</button>
     <button class="btn back" onclick="goBackToTeacherMenu()">Back</button>
@@ -304,9 +306,9 @@ td {
     <label>Student Name</label>
     <input id="sname">
     <label>Department</label>
-    <select id="sdept"><option value="">Select Department</option><option value="CS">CS</option><option value="BSCIT">IT</option></select>
+    <select id="sdept"><option value="">Select Department</option><option value="CS">Computer Science</option><option value="BSCIT">Information Technology</option></select>
     <label>Year</label>
-    <select id="syear"><option value="">Select Year</option><option>1</option><option>2</option><option>3</option></select>
+    <select id="syear"><option value="">Select Year</option><option>First Year</option><option>Second Year</option><option>Third Year</option></select>
     <label>Roll No</label><input id="sroll">
     <label>Password</label><input type="password" id="spass">
     <button class="btn" onclick="saveStudent()">Save</button>
