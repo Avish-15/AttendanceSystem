@@ -394,16 +394,28 @@ def add_student():
             "message": "Fill all the fields"
         })
 
+    # ✅ FIX: convert year from string → int
+    try:
+        year = int(data["year"])
+    except ValueError:
+        return jsonify({
+            "status": "fail",
+            "message": "Year must be a number"
+        })
+
     db = get_db_connection()
     cursor = db.cursor()
 
     try:
         cursor.execute(
-            "INSERT INTO students (name, department, year, roll_no, password) VALUES (%s,%s,%s,%s,%s)",
+            """
+            INSERT INTO students (name, department, year, roll_no, password)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
             (
                 data["name"],
                 data["department"],
-                data["year"],
+                year,               # ✅ int value
                 data["roll_no"],
                 data["password"]
             )
