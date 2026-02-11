@@ -863,8 +863,8 @@ def student_subjects():
         return jsonify({"subjects": []})
 
     # Map department to stream (e.g., BSCIT -> IT)
-    dept = student['department']
-    stream = "IT" if dept == "BSCIT" else dept
+    stream = student['department']
+
 
     # Fetch subjects based on student year & mapped stream
     cur.execute("""
@@ -894,6 +894,7 @@ def monthly():
     month = request.args.get("month")
     semester = request.args.get("semester") # Expected as int/string e.g. "3" or "Sem 3" via frontend select
     roll_no = session['roll_no']
+    
 
     # Normalize semester
     try:
@@ -911,9 +912,9 @@ def monthly():
         cur.close()
         conn.close()
         return jsonify({"data": {}})
-        
-    dept = student['department']
-    stream = "IT" if dept == "BSCIT" else dept
+    # change due to change in subject table    
+    stream = student['department']
+
 
     cur.close()
     
@@ -977,9 +978,8 @@ def semester():
         conn.close()
         return jsonify({"data": {}})
     
-    dept = student['department']
-    stream = "IT" if dept == "BSCIT" else dept
-    
+    # change due to change in subject table    
+    stream = student['department']
     cur.close()
     
     conn = get_db_connection()
@@ -1032,8 +1032,9 @@ def defaulter():
         conn.close()
         return jsonify({"attendance_percentage": 0, "is_defaulter": True})
         
-    dept = st_row['department']
-    stream = "IT" if dept == "BSCIT" else dept
+    # change due to change in subject table    
+    stream = st_row['department']
+
     
     cur.close()
     conn = get_db_connection()

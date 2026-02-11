@@ -405,6 +405,23 @@
         <!-- VIEW STUDENTS -->
         <div id="viewStudent" class="section">
           <h2>Students</h2>
+          <label>Department:</label>
+  <select id="filterDept" onchange="filterStudents()">
+    <option value="">All</option>
+    <option value="BSCIT">Information Technology</option>
+    <option value="CS">Computer Science</option>
+  </select>
+
+  <label style="margin-top:10px;">Year:</label>
+  <select id="filterYear" onchange="filterStudents()">
+    <option value="">All</option>
+    <option value="1">First Year</option>
+    <option value="2">Second Year</option>
+    <option value="3">Third Year</option>
+  </select>
+
+  <br /><br />
+
           <table>
             <thead>
               <tr>
@@ -1064,6 +1081,28 @@
       function closeAlert() {
         document.getElementById("customAlert").style.display = "none";
       }
+
+      //filter students
+      function filterStudents() {
+  const dept = document.getElementById("filterDept").value;
+  const year = document.getElementById("filterYear").value;
+
+  const rows = document.querySelectorAll("#studentTable tr");
+
+  rows.forEach(row => {
+    const rowDept = row.cells[0]?.innerText;
+    const rowYear = row.cells[1]?.innerText;
+
+    if (
+      (dept === "" || rowDept === dept) &&
+      (year === "" || rowYear === year)
+    ) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
     </script>
     <!-- Custom Alert Box -->
     <div
