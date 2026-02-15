@@ -27,16 +27,52 @@ def admin_login():
     
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM admins WHERE username=%s AND password=%s", (username, password))
-    admin = cursor.fetchone()
+    #cursor.execute("SELECT * FROM admins WHERE username=%s AND password=%s", (username, password))
+    cursor.execute("SELECT * FROM admins WHERE username=%s", (username,))
+    user = cursor.fetchone()
+    cursor.execute("SELECT * FROM admins WHERE password=%s", (password,))
+    pass_check = cursor.fetchone()
+
+   # Case 1: Both incorrect
+    if not user and not pass_check:
+        cursor.close()
+        db.close()
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid Credentials"
+        })
+
+    # Case 2: Username incorrect
+    if not user:
+        cursor.close()
+        db.close()
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid Username"
+        })
+
+    # Case 3: Password incorrect
+    if user["password"] != password:
+        cursor.close()
+        db.close()
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid Password"
+        })
+
+    # Case 4: Success
+    session['admin_logged_in'] = True
     cursor.close()
     db.close()
-    
-    if admin:
-        session['admin_logged_in'] = True
-        return jsonify({"status": "success"})
-    else:
-        return jsonify({"status": "fail"})
+
+    return jsonify({"status": "success"})
+    #cursor.close()
+    #db.close()
+    # if admin:
+   #     session['admin_logged_in'] = True
+   #     return jsonify({"status": "success"})
+   # else:
+   #     return jsonify({"status": "fail"})
 
 @app.route("/admin/dashboard")
 def admin_dashboard():

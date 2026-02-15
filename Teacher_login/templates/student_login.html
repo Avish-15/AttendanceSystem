@@ -160,7 +160,19 @@
 
       display: none;
 
+
     }
+    /* Remove Chrome autofill blue background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+select:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
   </style>
 
 </head>
@@ -180,15 +192,15 @@
       <select id="department" required>
         <option value="">Select department</option>
         <option value="CS">Computer Science</option>
-        <option value="IT">Information Technology</option>
+        <option value="BSCIT">Information Technology</option>
       </select>
 
       <label>Year:</label>
       <select id="year" required>
         <option value="">Select Year</option>
-        <option value="FY">First Year</option>
-        <option value="SY">Second Year</option>
-        <option value="TY">Third Year</option>
+        <option value="1">First Year</option>
+        <option value="2">Second Year</option>
+        <option value="3">Third Year</option>
       </select>
 
       <label>Password:</label>
@@ -250,6 +262,7 @@
         if (response.ok && data.success) {
           // Login successful
           submitBtn.textContent = 'Success! Redirecting...';
+          document.activeElement.blur(); 
           setTimeout(() => {
             window.location.href = '/student/dashboard';
           }, 500);

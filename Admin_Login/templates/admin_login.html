@@ -90,7 +90,7 @@
                 window.location.href = "/admin/dashboard";
             } else {
                 //ShowAlert("Invalid Username or Password");
-                showAlert("Invalid Username or Password", "red");
+                showAlert(data.message, "red");
 
                 document.getElementById("username").value = "";
                 document.getElementById("password").value = "";

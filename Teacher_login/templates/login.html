@@ -100,7 +100,9 @@
 
     <h2>Teacher Portal</h2>
 
-    <form action="/login" method="post">
+    <!--form action="/login" method="post"-->
+    <form id="loginForm">
+
     <label>Teacher ID:</label>
     <input type="text" name="teacher_id" placeholder="Enter Teacher ID" required>
 
@@ -111,15 +113,69 @@
 </form>
 
 </div>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="error-box">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
+<!-- Custom Alert Modal -->
+<div id="customAlert" style="
+display:none;
+position:fixed;
+top:0; left:0;
+width:100%; height:100%;
+background:rgba(0,0,0,0.4);
+justify-content:center;
+align-items:center;
+z-index:9999;">
+  <div style="
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  text-align:center;
+  min-width:280px;
+  border:2px solid #004a99;">
+    <p id="alertText" style="font-size:16px;"></p>
+    <button onclick="closeAlert()" class="btn">OK</button>
+  </div>
+</div>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const teacher_id = document.querySelector("input[name='teacher_id']").value;
+    const password = document.querySelector("input[name='password']").value;
+
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            teacher_id: teacher_id,
+            password: password
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            window.location.href = data.redirect;
+        } else {
+            showAlert(data.message, "red");
+        }
+    })
+    .catch(() => {
+        showAlert("Server error. Try again.", "red");
+    });
+});
+
+function showAlert(msg, color="red"){
+    const t = document.getElementById("alertText");
+    t.innerText = msg;
+    t.style.color = color;
+    document.getElementById("customAlert").style.display = "flex";
+}
+
+function closeAlert(){
+    document.getElementById("customAlert").style.display = "none";
+}
+</script>
+
 
 
 </body>

@@ -60,43 +60,54 @@ def student_login():
 
 @app.route("/login", methods=["POST"])
 def login():
-    teacher_id = request.form.get("teacher_id")
-    password = request.form.get("password")
+    data = request.json
+    teacher_id = data.get("teacher_id")
+    password = data.get("password")
 
     if not teacher_id or not password:
-        flash("Please enter both Teacher ID and Password", "error")
-        #return redirect(url_for("index"))
-        return redirect(url_for("teacher_login"))
+         return jsonify({
+            "status": "fail",
+            "message": "Please enter both Teacher ID and Password"
+        })
 
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
 
-    cur.execute(
-        "SELECT id, teacher_id, name, password FROM teachers WHERE teacher_id = %s",
-        (teacher_id,),
-    )
+    # Check if teacher exists
+    cur.execute("SELECT * FROM teachers WHERE teacher_id = %s", (teacher_id,))
     user = cur.fetchone()
+
+    # Check if password exists for ANY teacher
+    cur.execute("SELECT * FROM teachers WHERE password = %s", (password,))
+    pass_user = cur.fetchone()
 
     cur.close()
     conn.close()
+    if not user and not pass_user:
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid Credentials"
+        })
 
-    if user is None:
-        flash("Invalid Teacher ID or Password", "error")
-        return redirect(url_for("teacher_login"))
-        
+    if not user:
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid Teacher ID"
+        })
 
-
-    # Plain-text password verification
     if user["password"] != password:
-        flash("Invalid Teacher ID or Password", "error")
-        return redirect(url_for("teacher_login"))
-       
-
+        return jsonify({
+            "status": "fail",
+            "message": "Invalid Password"
+        })
 
     session["teacher_id"] = user["teacher_id"]
     session["teacher_name"] = user["name"]
 
-    return redirect(url_for("dashboard"))
+    return jsonify({
+        "status": "success",
+        "redirect": url_for("dashboard")
+    })
 
 
 @app.route("/dashboard")
@@ -813,24 +824,41 @@ def login_required():
 def students_login():
     data = request.json
     roll_no = data.get("roll_no")
+    department = data.get("department")
+    year = data.get("year")
     password = data.get("password")
-   
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT * FROM students WHERE roll_no=%s AND password=%s",
-        (roll_no, password)
-    )
-    student = cur.fetchone()
-    cur.close()
-    conn.close()
-    if not student:
-        
-        return jsonify({"success": False, "error": "Invalid credentials"}), 401
 
+    conn = get_db_connection()
+    cur = conn.cursor(dictionary=True)
+
+    # 🔹 First check if roll number exists
+    cur.execute("SELECT * FROM students WHERE roll_no=%s", (roll_no,))
+    student = cur.fetchone()
+
+    # Roll number not found
+    if not student:
+        cur.close()
+        conn.close()
+        return jsonify({"success": False, "error": "Invalid Roll Number"}), 401
+
+    #  Department or Year mismatch
+    if student["department"] != department or str(student["year"]) != str(year):
+        cur.close()
+        conn.close()
+        return jsonify({"success": False, "error": "Invalid Credentials"}), 401
+
+    #  Password wrong
+    if student["password"] != password:
+        cur.close()
+        conn.close()
+        return jsonify({"success": False, "error": "Invalid Password"}), 401
+
+    #  SUCCESS
     session['roll_no'] = roll_no
+
     cur.close()
     conn.close()
+
     return jsonify({"success": True})
 
 
