@@ -169,7 +169,7 @@
     const state = {
       mode: "month",
       month: "January",
-      semester: "Sem 3",
+      semester: [],
       subjects: []
     };
 
@@ -202,7 +202,12 @@
 
         // Auto-select initial semester if available and not set or invalid
         if (state.subjects.length > 0) {
-          const availableSems = [...new Set(state.subjects.map(s => s.semester))].sort();
+          const availableSems = [...new Set(state.subjects.map(s => Number(s.semester)))].sort((a,b)=>a-b);
+
+  // Always reset semester to first available
+          state.semester = availableSems[0];
+}
+
           // If current state.semester is not in available, pick the first one
           // Format of state.semester is strictly "Sem X" in some parts, but API returns int. 
           // Let's standardize state.semester to just the number (as string or int) for easier comparison, 
@@ -211,11 +216,9 @@
           // monthly: requests "semester" (string). 
           // semester: requests "semester" (string).
           // Let's default state.semester to the integer value of the first available semester
-          if (!state.semester || !availableSems.includes(parseInt(state.semester))) {
-            state.semester = availableSems[0];
-          }
+          
         }
-      } catch (e) {
+       catch (e) {
         console.error("Subject fetch error:", e);
         state.subjects = [];
       }
@@ -261,8 +264,9 @@
         const semSel = document.createElement("select");
         semSel.style.marginLeft = "10px";
         sems.forEach(s => {
-          semSel.innerHTML += `<option value="${s}" ${s == state.semester ? "selected" : ""}>Sem ${s}</option>`;
+        semSel.innerHTML += `<option value="${s}" ${Number(s) === Number(state.semester) ? "selected" : ""}>Semester ${s}</option>`;
         });
+
         semSel.onchange = e => {
           state.semester = e.target.value;
           renderOutput();
@@ -349,7 +353,7 @@
 
           let html = `
         <div class="stat">
-          <div><strong>Overall Attendance Overview (Sem ${state.semester})</strong></div>
+          <div><strong>Overall Attendance Overview (Semester ${state.semester})</strong></div>
           <div style="font-size:28px; margin: 10px 0;">${avg}%</div>
           <div class="${avg < 75 ? "defaulter-yes" : ""}" style="font-size: 14px;">
             ${avg < 75 ? "⚠️ YOU ARE IN DEFAULTER LIST" : "✅ YOUR ATTENDANCE IS CLEAR"}
