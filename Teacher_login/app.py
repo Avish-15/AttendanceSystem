@@ -900,7 +900,7 @@ def student_subjects():
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
 
-    # Get student's year & department
+    # Get student year & department
     cur.execute("""
         SELECT year, department
         FROM students
@@ -913,17 +913,24 @@ def student_subjects():
         conn.close()
         return jsonify({"subjects": []})
 
-    # Map department to stream (e.g., BSCIT -> IT)
     stream = student['department']
+    year = student['year']   # 1, 2, 3
 
-
-    # Fetch subjects based on student year & mapped stream
+# Map numeric year to semester range
+    if year == 1:
+     sem_start, sem_end = 1, 2
+    elif year == 2:
+     sem_start, sem_end = 3, 4
+    elif year == 3:
+     sem_start, sem_end = 5, 6
+    
     cur.execute("""
-        SELECT subject_name, semester
-        FROM subjects
-        WHERE stream = %s
-        ORDER BY semester, subject_name
-    """, (stream,))
+    SELECT subject_name, semester
+    FROM subjects
+    WHERE year= %s
+      AND semester BETWEEN %s AND %s
+    ORDER BY semester
+""", (year, sem_start,sem_end))
 
     subjects = cur.fetchall()
 
@@ -931,9 +938,11 @@ def student_subjects():
     conn.close()
 
     return jsonify({
-        "subjects": [{"name": s["subject_name"], "semester": s["semester"]} for s in subjects]
+        "subjects": [
+            {"name": s["subject_name"], "semester": s["semester"]}
+            for s in subjects
+        ]
     })
-
 
 
 # ---------------- MONTHLY ATTENDANCE ----------------
@@ -1127,4 +1136,5 @@ def defaulter():
     })
 
 if __name__ == "__main__":
+
     app.run(debug=True)
